@@ -1,0 +1,55 @@
+﻿@page "/tax"
+@inject IClipboardService ClipboardService
+
+<PageTitle>Vergi No Üret</PageTitle>
+
+<h1>Vergi No Üretiniz...</h1>
+<h3 role="status">Vergi No: @taxNo</h3>
+<button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
+<button class="btn btn-primary" @onclick="IdentityProduce">Tıklayınız</button>
+
+@code {
+    private string taxNo = "";
+    [Parameter]
+    public string TextToCopy { get; set; }
+    private const string _copyToClipboardText = "Kopyala";
+    private const string _copiedToClipboardText = "Kopyalandı";
+
+    private const string _defaultClass = "btn btn-primary";
+    private const string _successClass = "btn btn-success";
+
+    private string buttonText = _copyToClipboardText;
+    private string buttonClass = _defaultClass;
+
+    private void IdentityProduce()
+    {
+        taxNo = IsTaxNoNull(taxNo);
+        Random rnd = new Random();
+        for (int i = 0; i < 10; i++)
+        {
+            taxNo += rnd.Next(0,10);
+        }
+
+    }
+
+    private async Task CopyOnClick()
+    {
+        if (taxNo != null)
+        {
+            await ClipboardService.CopyToClipboard(taxNo);
+
+            buttonText = taxNo;
+            buttonClass = _successClass;
+
+            StateHasChanged();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            buttonText = _copyToClipboardText;
+            buttonClass = _defaultClass;
+        }
+    }
+
+    private string IsTaxNoNull(string identity) => identity = identity == null ? null : "";
+}
+

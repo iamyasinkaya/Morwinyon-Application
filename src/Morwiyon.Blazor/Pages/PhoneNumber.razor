@@ -1,0 +1,57 @@
+@page "/phone"
+@inject IClipboardService ClipboardService
+
+<PageTitle>Telefon Numarası Üret</PageTitle>
+
+<h1>Telefon Numarası Üretiniz...</h1>
+<h3 role="status">Telefon Numarası: @phoneNumber</h3>
+<button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
+<button class="btn btn-primary" @onclick="IdentityProduce">Tıklayınız</button>
+
+
+
+@code {
+    private string phoneNumber = "";
+    [Parameter]
+    public string TextToCopy { get; set; }
+    private const string _copyToClipboardText = "Kopyala";
+    private const string _copiedToClipboardText = "Kopyalandı";
+
+    private const string _defaultClass = "btn btn-primary";
+    private const string _successClass = "btn btn-success";
+
+    private string buttonText = _copyToClipboardText;
+    private string buttonClass = _defaultClass;
+
+    private void IdentityProduce()
+    {
+        phoneNumber = IsPhoneNumberNull(phoneNumber);
+        string phone = "5";
+        Random rnd = new Random();
+        phone += rnd.Next(111111111,999999999);
+        phoneNumber = phone;
+
+
+    }
+
+    private async Task CopyOnClick()
+    {
+        if (phoneNumber != null)
+        {
+            await ClipboardService.CopyToClipboard(phoneNumber);
+
+            buttonText = phoneNumber;
+            buttonClass = _successClass;
+
+            StateHasChanged();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            buttonText = _copyToClipboardText;
+            buttonClass = _defaultClass;
+        }
+    }
+
+    private string IsPhoneNumberNull(string phoneNumber) => phoneNumber = phoneNumber == null ? null : "";
+}
+

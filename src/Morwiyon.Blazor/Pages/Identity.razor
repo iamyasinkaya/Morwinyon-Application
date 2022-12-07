@@ -1,0 +1,64 @@
+@page "/identity"
+@inject IClipboardService ClipboardService
+
+<PageTitle>TCKN Üret</PageTitle>
+
+<h1>TCKN Üretiniz...</h1>
+<h3 role="status">TCKN: @identity</h3>
+<button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
+<button class="btn btn-primary" @onclick="IdentityProduce">Tıklayınız</button>
+
+@code {
+    private string identity = "";
+    [Parameter]
+    public string TextToCopy { get; set; }
+    private const string _copyToClipboardText = "Kopyala";
+    private const string _copiedToClipboardText = "Kopyalandı";
+
+    private const string _defaultClass = "btn btn-primary";
+    private const string _successClass = "btn btn-success";
+
+    private string buttonText = _copyToClipboardText;
+    private string buttonClass = _defaultClass;
+
+    private void IdentityProduce()
+    {
+        identity = IsTcknNull(identity);
+        Random rnd = new Random();
+        identity += rnd.Next(1, 10);
+        for (int i = 0; i < 8; i++)
+        {
+            identity += rnd.Next(10);
+        }
+        int singleTotal = Convert.ToInt32(identity[0].ToString()) + Convert.ToInt32(identity[2].ToString()) + Convert.ToInt32(identity[4].ToString()) + Convert.ToInt32(identity[6].ToString()) + Convert.ToInt32(identity[8].ToString());
+        int doubleTotal = Convert.ToInt32(identity[1].ToString()) + Convert.ToInt32(identity[3].ToString()) + Convert.ToInt32(identity[5].ToString()) + Convert.ToInt32(identity[7].ToString());
+
+        int tenDigits = ((singleTotal * 7) - doubleTotal) % 10;
+        int tenDigitsTotal = singleTotal + doubleTotal + tenDigits;
+        int elevenDigits = tenDigitsTotal % 10;
+
+        identity += tenDigits.ToString();
+        identity += elevenDigits.ToString();
+
+    }
+
+    private async Task CopyOnClick()
+    {
+        if (identity != null)
+        {
+            await ClipboardService.CopyToClipboard(identity);
+
+            buttonText = identity;
+            buttonClass = _successClass;
+
+            StateHasChanged();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            buttonText = _copyToClipboardText;
+            buttonClass = _defaultClass;
+        }
+    }
+
+    private string IsTcknNull(string identity) => identity = identity == null ? null : "";
+}

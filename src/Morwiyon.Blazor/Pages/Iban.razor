@@ -1,0 +1,89 @@
+﻿@page "/ibangenerate"
+
+
+
+@inject IClipboardService ClipboardService
+
+
+<PageTitle>IBAN Üret</PageTitle>
+
+<h1>IBAN Üretiniz...</h1>
+<h3 role="status">IBAN: @iban</h3>
+<button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
+<button class="btn btn-primary" @onclick="IbanGenerate">Tıklayınız</button>
+
+@code {
+
+    Morwiyon.Blazor.Iban.Iban iban;
+
+    [Parameter]
+    public string TextToCopy { get; set; }
+    private const string _copyToClipboardText = "Kopyala";
+    private const string _copiedToClipboardText = "Kopyalandı";
+
+    private const string _defaultClass = "btn btn-primary";
+    private const string _successClass = "btn btn-success";
+
+    private string buttonText = _copyToClipboardText;
+    private string buttonClass = _defaultClass;
+
+
+    public void IbanGenerate()
+    {
+        Random nationalCheckDigit = new Random();
+        var nationalCheckDigitResult = nationalCheckDigit.Next(10, 99);
+
+        Random bankCode = new Random();
+        var bankCodeResult = bankCode.Next(100, 999);
+
+        Random accountNumber = new Random();
+        var accountNumberResult = accountNumber.NextInt64(10000000, 99999999);
+
+        Random accountNumber2 = new Random();
+        var accountNumberResult2 = accountNumber2.NextInt64(10000000, 99999999);
+
+
+        iban = IsIbanNull(iban);
+
+        iban = new IbanBuilder()
+               .CountryCode(CountryCode.GetCountryCode("TR"))
+               .NationalCheckDigit($"{nationalCheckDigitResult}")
+               .BankCode($"00{bankCodeResult.ToString()}")
+               .AccountNumberPrefix($"0")
+               .AccountNumber($"{accountNumberResult}{accountNumberResult2}")
+               .Build();
+
+
+    }
+
+
+
+    private async Task CopyOnClick()
+    {
+        if (iban != null)
+        {
+            await ClipboardService.CopyToClipboard(iban.Value);
+            buttonText = iban.Value;
+            buttonClass = _successClass;
+
+            StateHasChanged();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            buttonText = _copyToClipboardText;
+            buttonClass = _defaultClass;
+        }
+
+
+    }
+
+    private Morwiyon.Blazor.Iban.Iban IsIbanNull(Morwiyon.Blazor.Iban.Iban iban)
+    {
+        if (iban != null)
+        {
+            return null;
+        }
+        return iban;
+    }
+
+}
