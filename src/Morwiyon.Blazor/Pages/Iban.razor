@@ -8,9 +8,9 @@
 <PageTitle>IBAN Üret</PageTitle>
 
 <h1>IBAN Üretiniz...</h1>
-<h3 role="status">IBAN: @iban</h3>
+<h3 role="status" id="label-iban">IBAN: @iban</h3>
 <button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
-<button class="btn btn-primary" @onclick="IbanGenerate">Tıklayınız</button>
+<button class="btn btn-primary" id="btn-generate-iban" @onclick="IbanGenerate">Tıklayınız</button>
 
 @code {
 

@@ -4,9 +4,9 @@
 <PageTitle>TCKN Üret</PageTitle>
 
 <h1>TCKN Üretiniz...</h1>
-<h3 role="status">TCKN: @identity</h3>
+<h3 id="label-tckn" role="status">TCKN: @identity</h3>
 <button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
-<button class="btn btn-primary" @onclick="IdentityProduce">Tıklayınız</button>
+<button class="btn btn-primary" id="btn-generate-tckn" @onclick="IdentityProduce">Tıklayınız</button>
 
 @code {
     private string identity = "";

@@ -4,9 +4,9 @@
 <PageTitle>Vergi No Üret</PageTitle>
 
 <h1>Vergi No Üretiniz...</h1>
-<h3 role="status">Vergi No: @taxNo</h3>
+<h3 id="label_taxno" role="status">Vergi No: @taxNo</h3>
 <button @onclick="CopyOnClick" class="@buttonClass">@buttonText</button>
-<button class="btn btn-primary" @onclick="IdentityProduce">Tıklayınız</button>
+<button class="btn btn-primary" id="btn-generate-taxno" @onclick="IdentityProduce">Tıklayınız</button>
 
 @code {
     private string taxNo = "";
